@@ -12,13 +12,22 @@ repos:
     hooks:
       - id: uv-lock
 
-  - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.15.2
+  # - repo: https://github.com/astral-sh/ruff-pre-commit
+  #   rev: v0.15.2
+  #   hooks:
+  #     - id: ruff-check
+  #       args: [ --fix ]
+  #     - id: ruff-format
+  #       types_or: [ python, pyi ]
+
+  - repo: local
     hooks:
       - id: ruff-check
-        args: [ --fix ]
-      - id: ruff-format
-        types_or: [ python, pyi ]
+        name: ruff-check
+        entry: uv run ruff check --fix
+        language: system
+        types: [python]
+        pass_filenames: false
 
   - repo: local
     hooks:

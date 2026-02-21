@@ -3,20 +3,19 @@ name = "temporaryname"
 version = "0.1.0"
 description = "Actor system for asyncio environments"
 readme = "README.md"
-authors = [
-    { name = "Marcin Glinski", email = "undefinedlamb@gmail.com" }
-]
-requires-python = ">=3.12"
+authors = [{ name = "Marcin Glinski", email = "undefinedlamb@gmail.com" }]
+requires-python = ">=3.11"
 license = { text = "MIT" }
-keywords =["asyncio", "actors", "distributed", "mesh", "concurrency"]
+keywords = ["asyncio", "actors", "distributed", "mesh", "concurrency"]
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Framework :: AsyncIO",
     "Intended Audience :: Developers",
     "Topic :: Software Development :: Libraries :: Python Modules",
+    "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
-    "Programming Language :: Python :: 3.14"
+    "Programming Language :: Python :: 3.14",
 ]
 dependencies = []
 

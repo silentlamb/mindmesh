@@ -1,10 +1,6 @@
 import asyncio
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Any
-
-if TYPE_CHECKING:
-    from .actor import BaseActor
-    from .hive import ActorRef
+from typing import Any, Generic, TypeVar
 
 
 @dataclass
@@ -13,9 +9,8 @@ class Envelope:
     reply_to: asyncio.Future[Any] | None
 
 
-@dataclass
-class ActorContext:
-    actor: "BaseActor"
-    actor_ref: "ActorRef"
-    monitored_by: set[str]
-    died: bool = False
+T_Response = TypeVar("T_Response")
+
+
+class Request(Generic[T_Response]):
+    pass
