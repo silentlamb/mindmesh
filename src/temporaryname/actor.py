@@ -56,6 +56,8 @@ class BaseActor:
     def stop(self, reason: StopReasonType = StopReason.Stop) -> None:
         if not self._event_loop:
             raise RuntimeError(f"Actor {self.id} not started")
+        if self._stop_reason is not None:
+            return
         self._stop_reason = reason
         self._event_loop.cancel()
 
