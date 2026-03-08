@@ -36,7 +36,7 @@ dev = [
 managed = true
 
 [tool.ruff.lint]
-select = ["E", "F", "I", "B", "UP", "ASYNC", "S"]
+select = ["E", "F", "I", "B", "UP", "ASYNC"]
 ignore = ["B027"]
 
 [tool.pyright]

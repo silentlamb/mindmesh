@@ -1,6 +1,16 @@
 import asyncio
 from dataclasses import dataclass
+from enum import Enum
 from typing import Any, Generic, TypeVar
+
+
+class StopReason(Enum):
+    Stop = "stop"
+    Shutdown = "shutdown"
+    LinkDeath = "link_death"
+
+
+StopReasonType = StopReason | BaseException
 
 
 @dataclass
