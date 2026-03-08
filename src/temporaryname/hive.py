@@ -60,11 +60,27 @@ class ActorHive:
         actor = self._actor_factory.create(self, actor_class, actor_id, *args, **kwargs)
         return self._registry.register(actor_id, actor).actor_ref
 
+    def create_named_actor(
+        self, name: str, actor_class: type[T], *args: Any, **kwargs: Any
+    ) -> ActorAddr:
+        actor_id = f"{actor_class.__name__}-{self._next_id}"
+        self._next_id += 1
+        actor = self._actor_factory.create(self, actor_class, actor_id, *args, **kwargs)
+        return self._registry.register(actor_id, actor, name=name).actor_ref
+
     def link_actors(self, source_id: str, monitor_id: str) -> None:
         self._registry.add_monitor(source_id, monitor_id)
 
     def link_actors_both(self, actor1: str, actor2: str) -> None:
         self._registry.add_monitor(actor1, actor2, both=True)
+
+    def lookup(self, actor_name: str) -> ActorAddr | None:
+        if context := self._registry.get_by_name(actor_name):
+            return context.actor_ref
+        return None
+
+    def register(self, actor_name: str, addr: ActorAddr) -> None:
+        self._registry.register_name(actor_name, addr.id())
 
     def request_actor_start(self, actor_id: str) -> None:
         if not (actor := self._registry.get_actor(actor_id)):
@@ -98,6 +114,13 @@ class ActorHive:
 
     def start_actor(self, actor_class: type[T], *args: Any, **kwargs: Any) -> ActorAddr:
         actor_ref = self.create_actor(actor_class, *args, **kwargs)
+        self.request_actor_start(actor_ref.id())
+        return actor_ref
+
+    def start_named_actor(
+        self, name: str, actor_class: type[T], *args: Any, **kwargs: Any
+    ) -> ActorAddr:
+        actor_ref = self.create_named_actor(name, actor_class, *args, **kwargs)
         self.request_actor_start(actor_ref.id())
         return actor_ref
 

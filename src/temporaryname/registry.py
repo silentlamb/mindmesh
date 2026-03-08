@@ -19,11 +19,13 @@ class ActorContext:
     actor_ref: ActorAddr
     monitors: set[str] = field(default_factory=set[str])
     monitored_by: set[str] = field(default_factory=set[str])
+    name: str | None = None
 
 
 class ActorRegistry:
     def __init__(self):
         self._contexts: dict[str, ActorContext] = {}
+        self._names: dict[str, ActorContext] = {}
 
     @property
     def actor_ids(self) -> list[str]:
@@ -63,6 +65,9 @@ class ActorRegistry:
             return context.actor
         return None
 
+    def get_by_name(self, actor_name: str) -> ActorContext | None:
+        return self._names.get(actor_name)
+
     def monitors(self, source_id: str) -> Generator[ActorContext, None, None]:
         if not (source := self.get(source_id)):
             logger.debug(f"Source {source_id} not found")
@@ -73,16 +78,42 @@ class ActorRegistry:
             else:
                 logging.debug(f"Monitor {monitor_id} of source {source_id} not found")
 
-    def register(self, actor_id: str, actor: BaseActor) -> ActorContext:
+    def register(
+        self, actor_id: str, actor: BaseActor, name: str | None = None
+    ) -> ActorContext:
         if actor_id in self._contexts:
             raise ValueError(f"Actor {actor_id} already in the registry")
         context = ActorContext(actor=actor, actor_ref=actor.as_ref())
         self._contexts[actor_id] = context
+        if name:
+            try:
+                self.register_name(name, actor_id)
+            except ValueError:
+                self.unregister(actor_id)
+                raise
         return context
+
+    def register_name(self, name: str, actor_id: str) -> None:
+        if not (context := self.get(actor_id)):
+            raise ValueError(f"Actor {actor_id} not found")
+        if context.name:
+            raise ValueError(
+                f"Actor {actor_id} previously registered as {context.name}"
+            )
+        if name in self._names:
+            other = self._names[name]
+            raise ValueError(
+                f"Actor {actor_id} could not be registered under name "
+                f"{name} - Actor {other.actor.id} was first."
+            )
+        context.name = name
+        self._names[name] = context
 
     def unregister(self, actor_id: str) -> None:
         self.drop_monitor(actor_id)
-        if actor_id in self._contexts:
+        if actor := self.get(actor_id):
+            if actor.name and actor.name in self._names:
+                del self._names[actor.name]
             del self._contexts[actor_id]
         else:
             logger.warning(f"Actor {actor_id} not registered")

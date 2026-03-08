@@ -2,10 +2,10 @@
 
 ## Named actor registry
 
-- [ ] `hive.register(name, addr)` — register actor under a human-readable name
-- [ ] `hive.lookup(name) -> ActorAddr | None` — find actor by name
-- [ ] `hive.start_named_actor(name, ActorClass, ...)` — convenience method
-- [ ] Auto-deregister from registry when actor stops (hook into `on_actor_stopped`)
+- [x] `hive.register(name, addr)` — register actor under a human-readable name
+- [x] `hive.lookup(name) -> ActorAddr | None` — find actor by name
+- [x] `hive.start_named_actor(name, ActorClass, ...)` — convenience method
+- [x] Auto-deregister from registry when actor stops (hook into `on_actor_stopped`)
 
 ## Scheduled messages
 
