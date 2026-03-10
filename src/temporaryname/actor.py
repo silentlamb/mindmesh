@@ -20,11 +20,26 @@ logger = logging.getLogger(__package__)
 
 
 class LinkAction(Enum):
+    """Return value of :meth:`BaseActor.on_link_death` controlling what happens next."""
+
     Continue = 0
+    """Keep this actor running after a monitored actor dies."""
     Stop = 1
+    """Stop this actor when a monitored actor dies."""
 
 
 class BaseActor:
+    """Base class for all actors. Subclass this to implement actor behaviour.
+
+    Messages are dispatched by :meth:`on_message` to methods named
+    ``on_<snake_case_type>`` - e.g. a ``MyRequest`` message calls
+    ``on_my_request(msg)``.
+
+    Lifecycle::
+
+        on_start() -> [message loop] -> on_stop()
+    """
+
     def __init__(self, hive: ActorHive, actor_id: str):
         self._hive = hive
         self._id = actor_id
@@ -38,22 +53,30 @@ class BaseActor:
 
     @property
     def hive(self) -> ActorHive:
+        """The hive this actor belongs to."""
         return self._hive
 
     @property
     def id(self) -> str:
+        """Unique ID of this actor."""
         return self._id
 
     def as_ref(self) -> ActorAddr:
+        """Return an :class:`ActorAddr` pointing to this actor."""
         return ActorAddr(self._hive, self._id)
 
     def start(self) -> None:
+        """Start the actor's event loop.
+
+        Called by the hive; use :meth:`ActorAddr.start` instead.
+        """
         if self._event_loop:
             logger.warning(f"Actor {self.id} already running")
         else:
             self._event_loop = asyncio.create_task(self._loop())
 
     def stop(self, reason: StopReasonType = StopReason.Stop) -> None:
+        """Cancel the actor's event loop with the given reason."""
         if not self._event_loop:
             raise RuntimeError(f"Actor {self.id} not started")
         if self._stop_reason is not None:
@@ -62,34 +85,57 @@ class BaseActor:
         self._event_loop.cancel()
 
     def stop_self(self) -> None:
+        """Schedule this actor to stop itself.
+
+        Safe to call from within a message handler.
+        """
+
         async def stop_deffered(hive: ActorHive, actor_id: str):
             hive.request_actor_stop(actor_id, StopReason.Stop)
 
         asyncio.create_task(stop_deffered(self._hive, self.id))
 
     def ask(self, request: Request[T_Response]) -> asyncio.Future[T_Response]:
+        """Enqueue a request and return a future for the response.
+
+        Must not be called from within the actor's own message loop.
+        Use :meth:`ActorAddr.ask` from outside instead.
+        """
         if self._is_called_from_self():
             raise RuntimeError("ask() called from the actor's message loop")
         future = asyncio.get_running_loop().create_future()
         self._mailbox.put_nowait(Envelope(payload=request, reply_to=future))
         return future
 
-    def tell(self, event: Any):
+    def tell(self, event: Any) -> None:
+        """Enqueue a fire-and-forget message with no reply."""
         self._mailbox.put_nowait(Envelope(payload=event, reply_to=None))
 
     async def wait_for_startup(self) -> None:
+        """Block until this actor has completed :meth:`on_start`."""
         await self._startup_future
 
     async def wait_for_stop(self) -> None:
+        """Block until this actor has fully stopped."""
         await self._stop_event.wait()
 
     # --------------------- Lifecycle callbacks ----------------------------- #
 
     async def on_link_death(self, actor_id: str, reason: StopReasonType) -> LinkAction:
+        """Called when a monitored actor stops.
+
+        Default behaviour: stop self. Override to handle the event differently
+        and return :attr:`LinkAction.Continue` to keep running.
+        """
         logger.warning(f"Link '{actor_id}' died: {reason} - stopping {self.id}")
         return LinkAction.Stop
 
     async def on_message(self, message: Any) -> Any:
+        """Dispatch an incoming message to the appropriate handler method.
+
+        Resolves the handler as ``on_<snake_case_type_name>`` and
+        calls it. Override to implement custom dispatch logic.
+        """
         type_name = type(message).__name__
         method_name = f"on_{snake_case(type_name)}"
         if (method := getattr(self, method_name, None)) is None:
@@ -104,17 +150,31 @@ class BaseActor:
         return result
 
     async def on_start(self) -> None:
+        """Called once before the message loop begins.
+
+        Override for initialisation logic.
+        """
         logger.debug(f"Actor {self.id} is starting")
 
     async def on_stop(self) -> None:
+        """Called once after the message loop ends.
+
+        Override for cleanup logic.
+        """
         logger.debug(f"Actor {self.id} is stopping")
 
     def on_task_create(self) -> Coroutine[Any, Any, None] | None:
+        """Return a coroutine to run as a background task alongside the message loop.
+
+        The task is cancelled when the actor stops. Return ``None`` (default) for
+        no background task.
+        """
         return None
 
     # --------------------- Internals --------------------------------------- #
 
     async def _loop(self) -> None:
+        """Main event loop."""
         try:
             # Handle start lifecycle event
             await self.on_start()
