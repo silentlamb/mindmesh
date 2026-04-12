@@ -1,6 +1,6 @@
 [project]
 name = "mindmesh"
-version = "0.1.0"
+version = "0.1.1"
 description = "Actor system for asyncio environments"
 readme = "README.md"
 authors = [{ name = "Marcin Glinski", email = "undefinedlamb@gmail.com" }]
@@ -18,6 +18,9 @@ classifiers = [
     "Programming Language :: Python :: 3.14",
 ]
 dependencies = []
+
+[project.urls]
+Homepage = "https://github.com/silentlamb/mindmesh/"
 
 [build-system]
 requires = ["uv_build>=0.10.4,<0.11.0"]
