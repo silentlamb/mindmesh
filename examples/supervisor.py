@@ -30,7 +30,7 @@ class SupervisorActor(BaseActor):
     async def on_start(self):
         for i in range(self._workers_num):
             addr = self.hive.start_actor(WorkerActor, i)
-            addr.link_actor(self.as_ref())
+            self.as_ref().monitor(addr)
             self._worker_actors[addr.id()] = i
             await addr.wait_for_start()
             self._worker_addrs.append(addr)
@@ -43,11 +43,11 @@ class SupervisorActor(BaseActor):
         if (worker_idx := self._worker_actors.pop(actor_id, -1)) < 0:
             logger.error(f"Worker actor {actor_id} not found")
             return LinkAction.Stop
-        new_addr = self.hive.start_actor(WorkerActor, worker_idx)
-        new_addr.link_actor(self.as_ref())
-        logger.debug(f"Replacing worker {actor_id} with worker {new_addr.id()}")
-        self._worker_actors[new_addr.id()] = worker_idx
-        self._worker_addrs[worker_idx] = new_addr
+        new_worker = self.hive.start_actor(WorkerActor, worker_idx)
+        self.as_ref().monitor(new_worker)
+        logger.debug(f"Replacing worker {actor_id} with worker {new_worker.id()}")
+        self._worker_actors[new_worker.id()] = worker_idx
+        self._worker_addrs[worker_idx] = new_worker
         return LinkAction.Continue
 
     def on_do_something(self, event: DoSomething):

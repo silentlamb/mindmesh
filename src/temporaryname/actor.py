@@ -50,6 +50,7 @@ class BaseActor:
         self._bg_task: asyncio.Task[None] | None = None
         self._stop_event: asyncio.Event = asyncio.Event()
         self._stop_reason: StopReasonType | None = None
+        self._ref: ActorAddr = ActorAddr(hive, actor_id)
 
     @property
     def hive(self) -> ActorHive:
@@ -63,7 +64,7 @@ class BaseActor:
 
     def as_ref(self) -> ActorAddr:
         """Return an :class:`ActorAddr` pointing to this actor."""
-        return ActorAddr(self._hive, self._id)
+        return self._ref
 
     def start(self) -> None:
         """Start the actor's event loop.

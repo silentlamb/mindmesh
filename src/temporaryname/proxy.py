@@ -32,12 +32,12 @@ class ActorAddr:
         """Send a request and await a typed response."""
         return await self._hive.ask_actor(self._id, request)
 
-    def link_actor(self, actor_ref: ActorAddr) -> None:
-        """Monitor *actor_ref* from this actor
+    def monitor(self, actor_ref: ActorAddr) -> None:
+        """Monitor *actor_ref* from this actor.
 
         Death of *actor_ref* triggers ``on_link_death``.
         """
-        self._hive.link_actors(self.id(), actor_ref.id())
+        self._hive.link_actors(actor_ref.id(), self.id())
 
     def start(self) -> None:
         """Schedule the actor to start."""
@@ -58,6 +58,12 @@ class ActorAddr:
     async def wait_for_stop(self) -> None:
         """Block until the actor has fully stopped."""
         await self._hive.wait_for_actor_stop(self._id)
+
+    def __eq__(self, other: object) -> bool:
+        return isinstance(other, ActorAddr) and self._id == other._id
+
+    def __hash__(self) -> int:
+        return hash(self._id)
 
     def __repr__(self) -> str:
         return f"ActorAddr{{id={self._id}}}"
