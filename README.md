@@ -219,4 +219,13 @@ Lint and type check:
 
 ## License
 
-MIT -- see LICENSE file.
+MIT - see LICENSE file.
+
+
+## Use of LLMs
+
+This project has been made by the use of LLMs in following areas:
+
+- Code review
+- Preparing test cases for discovered issues
+- Preparing and verifying documentation
