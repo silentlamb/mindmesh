@@ -5,10 +5,10 @@ import logging
 from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
-from temporaryname import ActorHive, BaseActor, Request
+from mindmesh import ActorHive, BaseActor, Request
 
 if TYPE_CHECKING:
-    from temporaryname import ActorAddr
+    from mindmesh import ActorAddr
 
 logger = logging.getLogger("calculator-example")
 

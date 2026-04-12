@@ -4,8 +4,8 @@ import asyncio
 
 import pytest
 
-from temporaryname import BaseActor
-from temporaryname.hive import ActorHive
+from mindmesh import BaseActor
+from mindmesh.hive import ActorHive
 
 
 async def test_start_named_actor_is_findable_by_lookup(hive: ActorHive) -> None:

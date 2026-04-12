@@ -2,10 +2,10 @@ import asyncio
 
 import pytest
 
-from temporaryname import BaseActor
-from temporaryname.core import Request
-from temporaryname.hive import ActorHive
-from temporaryname.proxy import ActorAddr
+from mindmesh import BaseActor
+from mindmesh.core import Request
+from mindmesh.hive import ActorHive
+from mindmesh.proxy import ActorAddr
 
 
 class GetValue(Request[int]):

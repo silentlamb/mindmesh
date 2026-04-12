@@ -6,9 +6,9 @@
 
 import asyncio
 
-from temporaryname import BaseActor, LinkAction
-from temporaryname.core import StopReason, StopReasonType
-from temporaryname.hive import ActorHive
+from mindmesh import BaseActor, LinkAction
+from mindmesh.core import StopReason, StopReasonType
+from mindmesh.hive import ActorHive
 
 
 class ReasonCapturingActor(BaseActor):

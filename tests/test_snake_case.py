@@ -1,6 +1,6 @@
 """Tests for CamelCase to snake_case conversion."""
 
-from temporaryname.actor import snake_case
+from mindmesh.actor import snake_case
 
 
 def test_single_word():

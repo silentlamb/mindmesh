@@ -1,5 +1,5 @@
 [project]
-name = "temporaryname"
+name = "mindmesh"
 version = "0.1.0"
 description = "Actor system for asyncio environments"
 readme = "README.md"

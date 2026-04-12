@@ -6,10 +6,10 @@ import random
 from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
-from temporaryname import ActorHive, BaseActor, LinkAction
+from mindmesh import ActorHive, BaseActor, LinkAction
 
 if TYPE_CHECKING:
-    from temporaryname import ActorAddr, StopReasonType
+    from mindmesh import ActorAddr, StopReasonType
 
 logger = logging.getLogger("supervisor-example")
 

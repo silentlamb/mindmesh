@@ -7,8 +7,8 @@ hanging wait_for_stop() futures.
 
 import asyncio
 
-from temporaryname import BaseActor
-from temporaryname.hive import ActorHive
+from mindmesh import BaseActor
+from mindmesh.hive import ActorHive
 
 
 class ExplodingOnStopActor(BaseActor):

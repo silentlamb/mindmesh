@@ -3,11 +3,11 @@ from __future__ import annotations
 import asyncio
 from typing import TYPE_CHECKING
 
-from temporaryname import BaseActor, LinkAction
-from temporaryname.hive import ActorHive
+from mindmesh import BaseActor, LinkAction
+from mindmesh.hive import ActorHive
 
 if TYPE_CHECKING:
-    from temporaryname import StopReasonType
+    from mindmesh import StopReasonType
 
 
 class WorkerActor(BaseActor):

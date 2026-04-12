@@ -14,8 +14,8 @@ Without fix: worker._stop_reason is overwritten from Shutdown to Stop.
 With fix:    first stop reason wins, Shutdown is preserved.
 """
 
-from temporaryname import ActorHive, BaseActor
-from temporaryname.core import StopReason, StopReasonType
+from mindmesh import ActorHive, BaseActor
+from mindmesh.core import StopReason, StopReasonType
 
 
 async def test_shutdown_reason_preserved(hive: ActorHive) -> None:

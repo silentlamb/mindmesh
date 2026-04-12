@@ -6,7 +6,7 @@ from typing import Any
 
 import pytest
 
-from temporaryname import ActorHive, BaseActor, Request
+from mindmesh import ActorHive, BaseActor, Request
 
 
 async def test_on_start_called(hive: ActorHive) -> None:

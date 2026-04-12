@@ -2,7 +2,7 @@ from collections.abc import AsyncGenerator
 
 import pytest
 
-from temporaryname import ActorHive
+from mindmesh import ActorHive
 
 
 @pytest.fixture

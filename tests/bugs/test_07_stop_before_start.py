@@ -2,8 +2,8 @@
 
 import pytest
 
-from temporaryname import BaseActor
-from temporaryname.hive import ActorHive
+from mindmesh import BaseActor
+from mindmesh.hive import ActorHive
 
 
 async def test_stop_never_started_actor_raises(hive: ActorHive) -> None:
