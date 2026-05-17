@@ -76,7 +76,7 @@ class ActorRegistry:
             if monitor := self.get(monitor_id):
                 yield monitor
             else:
-                logging.debug(f"Monitor {monitor_id} of source {source_id} not found")
+                logger.debug(f"Monitor {monitor_id} of source {source_id} not found")
 
     def register(
         self, actor_id: str, actor: BaseActor, name: str | None = None
